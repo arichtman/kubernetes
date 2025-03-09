@@ -23,32 +23,33 @@ import (
 // +genclient
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-// Foo is a specification for a Foo resource
-type Foo struct {
+// BackPatch represents a desire to update Kubernetes resources with data from the world
+type BackPatch struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   FooSpec   `json:"spec"`
-	Status FooStatus `json:"status"`
+	Spec   BackPatchSpec   `json:"spec"`
+	Status BackPatchStatus `json:"status"`
 }
 
-// FooSpec is the spec for a Foo resource
-type FooSpec struct {
-	DeploymentName string `json:"deploymentName"`
-	Replicas       *int32 `json:"replicas"`
+// Contains desired backpatch and parameters to achieve it
+type BackPatchSpec struct {
+	// +kubebuilder:validation:MinLength=1
+	ConfigMapName string `json:"configMapName"`
 }
 
-// FooStatus is the status for a Foo resource
-type FooStatus struct {
-	AvailableReplicas int32 `json:"availableReplicas"`
+// Contains information on patching status
+// +kubebuilder:subresource:status
+type BackPatchStatus struct {
+	LastPatchTimestamp string `json:"lastPatchTimestamp"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // FooList is a list of Foo resources
-type FooList struct {
+type BackPatchList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata"`
 
-	Items []Foo `json:"items"`
+	Items []BackPatch `json:"items"`
 }
